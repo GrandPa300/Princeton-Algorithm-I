@@ -54,11 +54,10 @@ G                                          BB
  </div>
 
 *  To write a faster, sorting-based solution `FastCollinearPoints`
-  * Think of *p* as the origin.
-  * For each other point *q*, determin the slope it makes with *p*.
-  * Sort the points according to the slopes they makes with *p*.
-  * Check if any 3 (or more) adjacent points in the sorted order have equal slopes with *p*.
-
+    * Think of *p* as the origin.
+    * For each other point *q*, determin the slope it makes with *p*.
+    * Sort the points according to the slopes they makes with *p*.
+    * Check if any 3 (or more) adjacent points in the sorted order have equal slopes with *p*.
 
 * Please check [specification](http://coursera.cs.princeton.edu/algs4/assignments/collinear.html) and [checklist](http://coursera.cs.princeton.edu/algs4/checklists/collinear.html) for more details.  
 
