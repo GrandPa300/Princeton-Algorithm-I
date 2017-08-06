@@ -3,51 +3,48 @@ import java.util.ArrayDeque;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
-public class SolverDummyI // Solver Dummy to store different version.
+
+public class Solver
 {
     private boolean solvable;
     private int moveCount;
     private ArrayDeque<Board> solutionDeque = new ArrayDeque<Board>();
      
     // find a solution to the initial board (using the A* algorithm)
-    public Solver(Board initial) // Solver with single minPQ
+    public Solver(Board initial) // Solver with double minPQ.
     {
-        // initial MinPQ inside Solver constructor,
-        // since minPQ is not used by other function.
-        // So when solver is done, memory will be released.
         MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
-        minPQ.insert( new SearchNode(initial, false));
-        minPQ.insert( new SearchNode(initial.twin(), true));
+        MinPQ<SearchNode> minPQTwin = new MinPQ<SearchNode>();
+        
+        minPQ.insert(new SearchNode(initial));
+        minPQTwin.insert(new SearchNode(initial.twin()));
         
         boolean running = true;
-        
         while (running)
         {
             SearchNode current = minPQ.delMin();
+            SearchNode currentTwin = minPQTwin.delMin();
+            
+            if (currentTwin.board.isGoal())
+            {
+                this.moveCount = -1;
+                this.solvable = false;
+                running = false;
+            }
             
             if (current.board.isGoal())
             {
-                if (current.isTwin)
+                this.moveCount = current.moves;
+                this.solvable = true;
+                
+                // Fill up solutionDeque with all solution boards.
+                while (current != null)
                 {
-                    this.moveCount = -1;
-                    this.solvable = false;
-                    running = false;
+                    solutionDeque.addFirst(current.board);
+                    current = current.prevNode;
                 }
                 
-                else
-                {
-                    this.moveCount = current.moves;
-                    this.solvable = true;
-                    
-                    // Fill up solutionDeque with all solution boards.
-                    while (current != null)
-                    {
-                        solutionDeque.addFirst(current.board);
-                        current = current.prevNode;
-                    }
-                     
-                    running = false;
-                }
+                running = false;
             }
             
             else
@@ -57,10 +54,22 @@ public class SolverDummyI // Solver Dummy to store different version.
                     if (current.prevNode == null || 
                         !neighborBoard.equals(current.prevNode.board))
                     {
-                        SearchNode neighborNode = new SearchNode(neighborBoard, current.isTwin);
+                        SearchNode neighborNode = new SearchNode(neighborBoard);
                         neighborNode.moves = current.moves + 1;
                         neighborNode.prevNode = current;
                         minPQ.insert(neighborNode);
+                    }
+                }
+                
+                for (Board neighborBoardTwin : currentTwin.board.neighbors())
+                {
+                    if (currentTwin.prevNode == null ||
+                        !neighborBoardTwin.equals(currentTwin.prevNode.board))
+                    {
+                        SearchNode neighborNodeTwin = new SearchNode(neighborBoardTwin);
+                        neighborNodeTwin.moves = currentTwin.moves + 1;
+                        neighborNodeTwin.prevNode = currentTwin;
+                        minPQTwin.insert(neighborNodeTwin);
                     }
                 }
             }
@@ -97,14 +106,12 @@ public class SolverDummyI // Solver Dummy to store different version.
         private Board board;
         private int moves;
         private SearchNode prevNode;
-        private boolean isTwin;
         
-        public SearchNode(Board board, boolean isTwin)
+        public SearchNode(Board board)
         {
             this.board = board;
             this.moves = 0;
             this.prevNode = null;
-            this.isTwin = isTwin;
         }
         
         public int compareTo(SearchNode that)
