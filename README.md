@@ -66,7 +66,7 @@
 * __Version 2__: Fix bug
 	* To include only maximal segment, segment need to fulfill `p.compareTo(pFirst) < 0`. 
 	* i.e. *p* itself need to be the smallest point in the same slope group. 
-### 8-puzzle
+### 4: 8-puzzle
 * Write a `Board` to represent status of game board status. 
 * Write a `Solver`  to solve the 8-puzzle problem (and its natural generalizations) using the A* search algorithm.
 
@@ -87,6 +87,35 @@
 	 * `SearchNode` uses variable  `prevNode` to avoid unnecessary search (i.e. going back and forth between 2 neighboring boards).
  *  __Version 2__:
 	 *  Use two individual MinPQ for original board and twin board. So instead searching alternatively between type of Nodes, now the best-first searching is simultaneous. The searching ends whichever reached the goal board. 
+### 5: Kd Trees
+* Write a data type to represent a set of points in the unit square. It supports range search and nearest-neighbor search. 
+
+<div align=center>
+	<img src="http://i.imgur.com/0Q6ZJP6.gif" width="30%" height="30%" />
+	<img src="http://i.imgur.com/rkPQ5nK.gif" width="30%" height="30%" />
+</div>
+
+* Please check [instruction](http://coursera.cs.princeton.edu/algs4/assignments/kdtree.html) and [checklist](http://coursera.cs.princeton.edu/algs4/checklists/kdtree.html) for more details.  
+#### Implementation and Optimization:
+* __Brute-force Implementation__: Red-black Binary Search Tree is used. Either "range search" or "nearest neighbor", all the points in the red-black BST are checked. 
+* __2D-Tree Implementation__: 
+* When build the 2D-Tree: 
+	1) in root level, divided node's rectangle in x-coordinate: point with smaller x goes to left sub-tree, otherwise go to right.
+	2) in next level, divided node's rectangle in y-coordinate: point with smaller y goes to left sub-tree, otherwise go to right.
+	3) repeating this pattern for all the sub-levels. 
+
+<div align=center>
+	<img src="http://i.imgur.com/nAZF4Cu.jpg" width="50%" height="50%" />
+</div>
+
+* Unlike brute-force, __pruning__ are used in this implementation: 
+	* Range Search: a subtree is searched only if it might contain a point contained in the query rectangle.
+		* No need to explore node whose rectangle has no intersection with query rectangle. 
+	* Nearest Point:  search a node only if it might contain a point that is closer than the best one found so far. 
+		* Search subtree that is on the same side of the splitting line as the query point first. 
+
+
+
 
 
 
